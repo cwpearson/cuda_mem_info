@@ -4,6 +4,7 @@ env:
   global:
     - DO_BUILD=yes
     - DO_TEST=yes
+    - CUDA_HOST=${HOME}/cuda
 matrix:
   include:
   - env:
@@ -17,6 +18,7 @@ before_install:
   mkdir -p ${HOME}/cmake &&
   tar xf ${HOME}/cmake-tarball.tar.gz -C ${HOME}/cmake --strip-components=1 &&
   export PATH=${HOME}/cmake/bin:${PATH}
+- export PATH=${CUDA_HOST}/bin:${PATH}
 install:
   - ./ci/install_cuda_${CUDA_VERSION}.sh
 script:

@@ -1,6 +1,6 @@
 # /bin/bash
 
-export CUDA_URL="https://developer.nvidia.com/compute/cuda/9.2/Prod/local_installers/cuda_9.2.88_396.26_linux"
+export CUDA_URL="https://developer.nvidia.com/compute/cuda/8.0/Prod2/local_installers/cuda_8.0.61_375.26_linux-run"
 
 curl -sL -o cuda.run "$CUDA_URL" \
     && chmod +x cuda.run \
