@@ -1,0 +1,21 @@
+dist: trusty
+language: cpp
+env:
+  global:
+    - DO_BUILD=yes
+    - DO_TEST=yes
+matrix:
+  include:
+  - env:
+    - CUDA=92
+
+before_install:
+- CMAKE_URL="https://cmake.org/files/v3.9/cmake-3.9.6.tar.gz"
+- curl -o ${HOME}/cmake-tarball.tar.gz ${CMAKE_URL} &&
+  mkdir -p ${HOME}/cmake &&
+  tar xf ${HOME}/cmake-tarball.tar.gz -C ${HOME}/cmake --strip-components=1 &&
+  export PATH=${HOME}/cmake/bin:${PATH}
+install:
+  - ./ci/install_cuda_92.sh
+script:
+  - ./ci/build.sh
