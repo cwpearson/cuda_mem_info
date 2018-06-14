@@ -10,8 +10,6 @@ matrix:
     - CUDA_VERSION=92
   - env:
     - CUDA_VERSION=80
-  - env:
-    - CUDA_VERSION=75
 
 before_install:
 - CMAKE_URL="https://cmake.org/files/v3.9/cmake-3.9.6.tar.gz"
