@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
         cudaDeviceGetAttribute ( &v, cudaDevAttrDirectManagedMemAccessFromHost, i );
 
         printf("\tcudaDevAttrDirectManagedMemAccessFromHost: %d\n", v);
-        printf("\t\tHost can directly access managed memory on the device without migration.");
+        printf("\t\tHost can directly access managed memory on the device without migration.\n");
     }
 
     return 0;
