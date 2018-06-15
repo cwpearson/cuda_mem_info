@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
     
         printf("Device %d: %s\n", i, prop.name);
 
-#if __CUDACC_VER_MAJOR__ > 8
+#if __CUDACC_VER_MAJOR__ > 8 && __CUDACC_VER_MINOR__ >  1
         printf("\tcudaDeviceProp.pageableMemoryAccessUsesHostPageTables: %d\n", prop.pageableMemoryAccessUsesHostPageTables);
         printf("\t\tDevice accesses pageable memory using host page tables.\n");
         printf("\t\tThis suggests Address Translation Services are enabled on Power9\n");
