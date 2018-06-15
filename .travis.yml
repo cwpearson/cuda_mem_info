@@ -10,6 +10,10 @@ matrix:
   - env:
     - CUDA_VERSION=92
   - env:
+    - CUDA_VERSION=91
+  - env:
+    - CUDA_VERSION=90
+  - env:
     - CUDA_VERSION=80
 
 before_install:
