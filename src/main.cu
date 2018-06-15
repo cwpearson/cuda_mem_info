@@ -25,11 +25,20 @@ int main(int argc, char **argv) {
 #endif
 
 #if __CUDACC_VER_MAJOR__ > 8 && __CUDACC_VER_MINOR__ >  1
+{
         int v;
         cudaDeviceGetAttribute ( &v, cudaDevAttrDirectManagedMemAccessFromHost, i );
         printf("\tcudaDevAttrDirectManagedMemAccessFromHost: %d\n", v);
         printf("\t\tHost can directly access managed memory on the device without migration.\n");
+}
 #endif
+
+{
+        int v;
+        cudaDeviceGetAttribute ( &v, cudaDevAttrCanFlushRemoteWrites, i );
+        printf("\tcudaDevAttrCanFlushRemoteWrites: %d\n", v);
+        printf("\t\tdevice supports flushing of outstanding remote writes.\n");
+}
 
         printf("\tcudaDeviceProp.pageableMemoryAccess: %d\n", prop.pageableMemoryAccess);
         printf("\t\tDevice supports coherently accessing pageable memory without calling cudaHostRegister on it.\n");
