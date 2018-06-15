@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
         printf("\t\tDevice can access host registered memory at the same virtual address as the CPU.\n");
 #endif
 
-#if __CUDACC_VER_MAJOR__ > 8
+#if __CUDACC_VER_MAJOR__ > 8 && __CUDACC_VER_MINOR__ >  1
         int v;
         cudaDeviceGetAttribute ( &v, cudaDevAttrDirectManagedMemAccessFromHost, i );
         printf("\tcudaDevAttrDirectManagedMemAccessFromHost: %d\n", v);
