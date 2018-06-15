@@ -15,8 +15,13 @@ int main(int argc, char **argv) {
 
 #if __CUDACC_VER_MAJOR__ > 8
         printf("\tcudaDeviceProp.pageableMemoryAccessUsesHostPageTables: %d\n", prop.pageableMemoryAccessUsesHostPageTables);
-        printf("\t\tThis device accesses pageable memory using host page tables.\n");
+        printf("\t\tDevice accesses pageable memory using host page tables.\n");
         printf("\t\tThis suggests Address Translation Services are enabled on Power9\n");
+#endif
+
+#if __CUDACC_VER_MAJOR__ > 8
+        printf("\tcudaDeviceProp.canUseHostPointerForRegisteredMem: %d\n", prop.canUseHostPointerForRegisteredMem);
+        printf("\t\tDevice can access host registered memory at the same virtual address as the CPU.\n");
 #endif
 
 #if __CUDACC_VER_MAJOR__ > 8
