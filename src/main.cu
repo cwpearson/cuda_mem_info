@@ -1,7 +1,8 @@
 #include <cstdio>
+#include <cassert>
 
 int main(int argc, char **argv) {
-
+    int err = 0;
     int n;
     cudaGetDeviceCount(&n);
 
@@ -10,6 +11,8 @@ int main(int argc, char **argv) {
 
         cudaDeviceProp prop;
         cudaGetDeviceProperties(&prop, i);
+
+
     
         printf("Device %d: %s\n", i, prop.name);
 
@@ -81,7 +84,22 @@ int main(int argc, char **argv) {
 
         printf("\tcudaDeviceProp.memoryClockRate: %d\n", prop.memoryClockRate);
         printf("\t\tkhz\n");
+
+
+        {
+                cudaSetDevice(i);
+                cudaSharedMemConfig config;
+                cudaDeviceGetSharedMemConfig ( &config );
+                if (cudaSharedMemBankSizeFourByte == config) {
+                        printf("\tcudaDeviceGetSharedMemConfig: cudaSharedMemBankSizeFourByte\n");
+                } else if ( cudaSharedMemBankSizeEightByte == config) {
+                        printf("\tcudaDeviceGetSharedMemConfig: cudaSharedMemBankSizeEightByte\n");
+                } else {
+                        printf("\tcudaDeviceGetSharedMemConfig: UNKNOWN\n");
+                        err = 1;
+                }
+        }
     }
 
-    return 0;
+    return err;
 }
