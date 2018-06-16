@@ -99,6 +99,29 @@ int main(int argc, char **argv) {
                         err = 1;
                 }
         }
+
+        {
+                cudaSetDevice(i);
+                cudaFuncCache config;
+                cudaDeviceGetCacheConfig ( &config );
+                if (cudaFuncCachePreferNone == config) {
+                        printf("\tcudaDeviceGetCacheConfig: cudaFuncCachePreferNone\n");
+                        printf("\t\tno preference for shared memory or L1, or sizes are fixed\n");
+                } else if ( cudaFuncCachePreferShared == config) {
+                        printf("\tcudaDeviceGetCacheConfig: cudaFuncCachePreferShared\n");
+                        printf("\t\tprefer larger shared memory and smaller L1 cache\n");
+                } else if ( cudaFuncCachePreferL1 == config) {
+                        printf("\tcudaDeviceGetCacheConfig: cudaFuncCachePreferL1\n");
+                        printf("\t\tprefer larger L1 cache and smaller shared memory\n");
+                } else if ( cudaFuncCachePreferEqual == config) {
+                        printf("\tcudaDeviceGetCacheConfig: cudaFuncCachePreferEqual\n");
+                        printf("\t\tprefer equal size L1 cache and shared memory\n");
+                } else {
+                        printf("\tcudaDeviceGetCacheConfig: UNKNOWN\n");
+                        err = 1;
+                }
+        }
+
     }
 
     return err;
