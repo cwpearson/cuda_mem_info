@@ -4,29 +4,39 @@
 #include "table.hpp"
 
 int main(int argc, char **argv) {
+
+    int verbose = 1;
+    int print_descriptions = 1;
+
     int err = 0;
     int n;
     cudaGetDeviceCount(&n);
 
     for (int i = 0; i < n; ++i) {
 
+        Table table;
 
         cudaDeviceProp prop;
         cudaGetDeviceProperties(&prop, i);
 
-
-    
-        printf("Device %d: %s\n", i, prop.name);
+        table.Cellf("Device %d: %s", i, prop.name);
 
 #if __CUDACC_VER_MAJOR__ > 8 && __CUDACC_VER_MINOR__ >  1
-        printf("\tcudaDeviceProp.pageableMemoryAccessUsesHostPageTables: %d\n", prop.pageableMemoryAccessUsesHostPageTables);
-        printf("\t\tDevice accesses pageable memory using host page tables.\n");
-        printf("\t\tThis suggests Address Translation Services are enabled on Power9\n");
+        table.NewRow();
+        table.Cell("cudaDeviceProp.pageableMemoryAccessUsesHostPageTables");
+        table.Cellf("%d", prop.pageableMemoryAccessUsesHostPageTables);
+        if (print_descriptions) {
+                table.Cell("Device accesses pageable memory using host page tables. This suggests Address Translation Services are enabled on Power9");
+        }
 #endif
 
 #if __CUDACC_VER_MAJOR__ > 8
-        printf("\tcudaDeviceProp.canUseHostPointerForRegisteredMem: %d\n", prop.canUseHostPointerForRegisteredMem);
-        printf("\t\tDevice can access host registered memory at the same virtual address as the CPU.\n");
+        table.NewRow();
+        table.Cell("cudaDeviceProp.canUseHostPointerForRegisteredMem");
+        table.Cellf("%d", prop.canUseHostPointerForRegisteredMem);
+        if (print_descriptions) {
+                table.Cell("Device can access host registered memory at the same virtual address as the CPU");
+        }
 #endif
 
 #if __CUDACC_VER_MAJOR__ > 8 && __CUDACC_VER_MINOR__ >  1
@@ -124,7 +134,11 @@ int main(int argc, char **argv) {
                 }
         }
 
+        printf("%s\n", table.csv_str().c_str());
+
     }
+
+
 
     return err;
 }
