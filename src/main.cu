@@ -1,6 +1,8 @@
 #include <cstdio>
 #include <cassert>
 
+#include "table.hpp"
+
 int main(int argc, char **argv) {
     int err = 0;
     int n;
