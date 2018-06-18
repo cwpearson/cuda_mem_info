@@ -48,9 +48,71 @@ format (const char *fmt, ...)
     return buf;
 }
 
+
+class Row {
+    private:
+    std::vector<std::string> row_;
+    public:
+    size_t size() const {
+        return row_.size();
+    }
+
+    void push_back(const std::string &s) {
+        row_.push_back(s);
+    }
+
+    const std::string &operator[](const size_t i) const {
+        return row_[i];
+    }
+
+    std::string &operator[](const size_t i) {
+        return row_[i];
+    }
+
+    std::string csv_str(size_t pad = 0) const {
+        std::stringstream ss;
+        const size_t size = std::max(pad, row_.size());
+        for (size_t i = 0; i < size; ++i) {
+            if (i < row_.size()) {
+                ss << row_[i];
+            }
+            if (i + 1 < size) {
+                ss << ",";
+            }
+        }
+        return ss.str();
+    }
+
+    std::string md_str (size_t pad = 0) const {
+        std::stringstream ss;
+        const size_t size = std::max(pad, row_.size());
+        for (size_t i = 0; i < size; ++i) {
+            if (i < row_.size()) {
+                ss << row_[i];
+            }
+            ss << "|";
+        }
+        return ss.str();
+    }
+
+    std::string shell_str(const size_t pad = 0, const std::vector<size_t> col_pads = {}) const {
+        std::stringstream ss;
+        const size_t num_cols = std::max(pad, row_.size());
+        for (size_t i = 0; i < num_cols; ++i) {
+            if (i < row_.size()) {
+                ss << " " << row_[i];
+            }
+            ss << " |";
+        }
+        return ss.str();
+    }
+};
+
 class Table {
 private:
-    std::vector<std::vector<std::string>> rows_;
+    Row header_;
+    std::vector<Row> rows_;
+    std::string title_;
 
     size_t NumRows() const {
         return rows_.size();
@@ -80,7 +142,7 @@ public:
     }
 
     void NewRow() {
-        rows_.push_back(std::vector<std::string>());
+        rows_.push_back(Row());
     }
 
     std::string csv_str() {
@@ -89,19 +151,42 @@ public:
         const auto num_cols = NumCols();
 
         for (const auto row : rows_) {
-            for (size_t i = 0; i < num_cols; ++i) {
-                if (i < row.size()) {
-                    ss << row[i];
-                }
-                if (i + 1 < num_cols) {
-                    ss << ",";
-                }
-            }
+            ss << row.csv_str();
             ss << std::endl;
         }
         return ss.str();
     }
+
     std::string md_str() {
-        return "";
+        std::stringstream ss;
+
+        const size_t num_rows = NumRows();
+        const size_t num_cols = NumCols();
+
+        for (size_t rowIdx = 0; rowIdx < num_rows; ++rowIdx) {
+
+            const auto &row = rows_[rowIdx];
+
+            if (num_cols > 0) {
+                ss << "|";
+            }
+
+            ss << row.md_str(num_cols);
+            ss << "\n";
+
+            // first row, print title break
+            if (0 == rowIdx) {
+                if (num_cols > 0) {
+                    ss << "|";
+                }
+                for (size_t i = 0; i < num_cols; ++i) {
+                    ss << "-|";
+                }
+            ss << "\n";
+            }
+
+        }
+
+        return ss.str();
     }
 };
