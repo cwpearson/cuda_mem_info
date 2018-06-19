@@ -34,6 +34,7 @@ before_install:
   tar xf ${HOME}/cmake-tarball.tar.gz -C ${HOME}/cmake --strip-components=1 &&
   export PATH=${HOME}/cmake/bin:${PATH}
 - export PATH=${CUDA_HOST}/bin:${PATH}
+- cmake --version
 install:
   - ./ci/install_cuda_${CUDA_VERSION}.sh
 script:

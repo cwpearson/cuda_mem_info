@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
 
         try
         {
-          cxxopts::Options options(argv[0], " - format CUDA device info");
+          cxxopts::Options options(argv[0], "Format CUDA device info");
           options
             .positional_help("[optional args]")
             .show_positional_help();
