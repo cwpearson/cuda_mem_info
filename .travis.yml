@@ -14,8 +14,8 @@ env:
     - DO_BUILD=yes
     - DO_TEST=yes
     - CUDA_HOST=${HOME}/cuda
-    - CC=g++-4.9
-    - CXX=gcc-4.9
+    - C_COMPILER=g++-4.9
+    - CXX_COMPILER=gcc-4.9
 matrix:
   include:
   - env:
@@ -34,6 +34,8 @@ before_install:
   tar xf ${HOME}/cmake-tarball.tar.gz -C ${HOME}/cmake --strip-components=1 &&
   export PATH=${HOME}/cmake/bin:${PATH}
 - export PATH=${CUDA_HOST}/bin:${PATH}
+- echo $PATH
+- which cmake
 - cmake --version
 install:
   - ./ci/install_cuda_${CUDA_VERSION}.sh

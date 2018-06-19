@@ -9,6 +9,8 @@ function or_die () {
     fi
 }
 
+set -x
+
 source ~/.bashrc
 cd ${TRAVIS_BUILD_DIR}
 or_die mkdir travis-build
@@ -16,7 +18,7 @@ or_die mkdir travis-build
 cd travis-build
 
 if [[ "$DO_BUILD" == "yes" ]] ; then
-    or_die cmake ../ -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}"
+    or_die cmake ../ -DCMAKE_C_COMPILER="${C_COMPILER}" -DCMAKE_CXX_COMPILER="${CXX_COMPILER}"
     or_die make VERBOSE=1
 fi
 
