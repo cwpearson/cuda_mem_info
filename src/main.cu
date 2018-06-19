@@ -15,11 +15,17 @@ int main(int argc, char **argv) {
     for (int i = 0; i < n; ++i) {
 
         Table table;
+        table.Header(0) = "Property";
+        table.Header(1) = "Value";
+        if (print_descriptions) {
+                table.Header(2) = "Description";
+        }
+
 
         cudaDeviceProp prop;
         cudaGetDeviceProperties(&prop, i);
 
-        table.Cellf("Device %d: %s", i, prop.name);
+        table.Titlef("Device %d: %s", i, prop.name);
 
 #if __CUDACC_VER_MAJOR__ > 8 && __CUDACC_VER_MINOR__ >  1
         table.NewRow();
@@ -66,58 +72,95 @@ int main(int argc, char **argv) {
 #endif
 
         table.NewRow();
-        printf("\tcudaDeviceProp.pageableMemoryAccess: %d\n", prop.pageableMemoryAccess);
-        printf("\t\tDevice supports coherently accessing pageable memory without calling cudaHostRegister on it.\n");
+        table.Cell("cudaDeviceProp.pageableMemoryAccess");
+        table.Cellf("%d", prop.pageableMemoryAccess);
+        if (print_descriptions) {
+                table.Cell("Device supports coherently accessing pageable memory without calling cudaHostRegister on it.");
+        }
 
         table.NewRow();
-        printf("\tcudaDeviceProp.concurrentManagedAccess: %d\n", prop.concurrentManagedAccess);
-        printf("\t\tDevice can coherently access managed memory concurrently with the CPU.\n");
+        table.Cell("cudaDeviceProp.concurrentManagedAccess");
+        table.Cellf("%d", prop.concurrentManagedAccess);
+        if (print_descriptions) {
+                table.Cell("Device can coherently access managed memory concurrently with the CPU.");
+        }
 
         table.NewRow();
-        printf("\tcudaDeviceProp.canMapHostMemory: %d\n", prop.canMapHostMemory);
-        printf("\t\tDevice can map host memory into the CUDA address space for use with cudaHostAlloc()/cudaHostGetDevicePointer().\n");
+        table.Cell("cudaDeviceProp.canMapHostMemory");
+        table.Cellf("%d", prop.canMapHostMemory);
+        if (print_descriptions) {
+                table.Cell("Device can map host memory into the CUDA address space for use with cudaHostAlloc()/cudaHostGetDevicePointer()");
+        }
 
         table.NewRow();
-        printf("\tcudaDeviceProp.totalGlobalMem: %lu\n", prop.totalGlobalMem);
-        printf("\t\tbytes\n");
+        table.Cell("cudaDeviceProp.totalGlobalMem");
+        table.Cellf("%lu", prop.totalGlobalMem);
+        if (print_descriptions) {
+                table.Cell("bytes");
+        }
 
         table.NewRow();
-        printf("\tcudaDeviceProp.totalConstMem: %lu\n", prop.totalConstMem);
-        printf("\t\tbytes\n");
+        table.Cell("cudaDeviceProp.totalConstMem");
+        table.Cellf("%lu", prop.totalConstMem);
+        if (print_descriptions) {
+                table.Cell("bytes");
+        }
 
         table.NewRow();
-        printf("\tcudaDeviceProp.sharedMemPerBlock: %lu\n", prop.sharedMemPerBlock);
-        printf("\t\tbytes\n");
+        table.Cell("cudaDeviceProp.sharedMemPerBlock");
+        table.Cellf("%lu", prop.sharedMemPerBlock);
+        if (print_descriptions) {
+                table.Cell("bytes");
+        }
 
         table.NewRow();
-        printf("\tcudaDeviceProp.sharedMemPerMultiprocessor: %lu\n", prop.sharedMemPerMultiprocessor);
-        printf("\t\tbytes\n");
+        table.Cell("cudaDeviceProp.sharedMemPerMultiprocessor");
+        table.Cellf("%lu", prop.sharedMemPerMultiprocessor);
+        if (print_descriptions) {
+                table.Cell("bytes");
+        }
 
         table.NewRow();
-        printf("\tcudaDeviceProp.asyncEngineCount: %d\n", prop.asyncEngineCount);
-        printf("\t\t1 when the device can concurrently copy memory between host and device while executing a kernel.\n"
-        "\t\t2 when the device can concurrently copy memory between host and device in both directions and execute a kernel at the same time.\n");
+        table.Cell("cudaDeviceProp.l2CacheSize");
+        table.Cellf("%d", prop.l2CacheSize);
+        if (print_descriptions) {
+                table.Cell("bytes");
+        }
 
         table.NewRow();
-        printf("\tcudaDeviceProp.globalL1CacheSupported: %d\n", prop.globalL1CacheSupported);
-        printf("\t\tDevice supports caching of globals in L1 cache.\n");
+        table.Cell("cudaDeviceProp.memoryBusWidth");
+        table.Cellf("%d", prop.memoryBusWidth);
+        if (print_descriptions) {
+                table.Cell("bits");
+        }
 
         table.NewRow();
-        printf("\tcudaDeviceProp.localL1CacheSupported: %d\n", prop.localL1CacheSupported);
-        printf("\t\tDevice supports caching of locals in L1 cache.\n");
+        table.Cell("cudaDeviceProp.memoryClockRate");
+        table.Cellf("%d", prop.memoryClockRate);
+        if (print_descriptions) {
+                table.Cell("kHz");
+        }
 
         table.NewRow();
-        printf("\tcudaDeviceProp.l2CacheSize: %d\n", prop.l2CacheSize);
-        printf("\t\tbytes\n");
+        table.Cell("cudaDeviceProp.asyncEngineCount");
+        table.Cellf("%d", prop.asyncEngineCount);
+        if (print_descriptions) {
+                table.Cell("1: concurrent kernel and copy, 2: kernel and duplex copy");
+        }
 
         table.NewRow();
-        printf("\tcudaDeviceProp.memoryBusWidth: %d\n", prop.memoryBusWidth);
-        printf("\t\tbits\n");
+        table.Cell("cudaDeviceProp.globalL1CacheSupported");
+        table.Cellf("%d", prop.globalL1CacheSupported);
+        if (print_descriptions) {
+                table.Cell("Device supports caching of globals in L1 cache");
+        }
 
         table.NewRow();
-        printf("\tcudaDeviceProp.memoryClockRate: %d\n", prop.memoryClockRate);
-        printf("\t\tkhz\n");
-
+        table.Cell("cudaDeviceProp.localL1CacheSupported");
+        table.Cellf("%d", prop.localL1CacheSupported);
+        if (print_descriptions) {
+                table.Cell("Device supports caching of locals in L1 cache");
+        }
 
         {
                 cudaSetDevice(i);
@@ -157,6 +200,7 @@ int main(int argc, char **argv) {
 
         printf("%s\n", table.csv_str().c_str());
         printf("%s\n", table.md_str().c_str());
+        printf("%s\n", table.shell_str().c_str());
 
     }
 
