@@ -16,7 +16,7 @@ or_die mkdir travis-build
 cd travis-build
 
 if [[ "$DO_BUILD" == "yes" ]] ; then
-    or_die cmake ../
+    or_die cmake ../ -DCMAKE_C_COMPILER="$C_COMPILER" -DCMAKE_CXX_COMPILER="$CXX_COMPILER"
     or_die make VERBOSE=1
 fi
 

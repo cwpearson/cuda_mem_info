@@ -7,12 +7,15 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.9
+      - gcc-4.9
 
 env:
   global:
     - DO_BUILD=yes
     - DO_TEST=yes
     - CUDA_HOST=${HOME}/cuda
+    - C_COMPILER=g++-4.9
+    - CXX_COMPILER=gcc-4.9
 matrix:
   include:
   - env:
