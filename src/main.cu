@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
           options
         //     .allow_unrecognised_options()
             .add_options()
-            ("f,format", "Output Format", cxxopts::value<std::string>(output_format)->default_value("shell"), "FMT")
+            ("f,format", "Output Format", cxxopts::value<std::string>(output_format)->default_value("shell"), "shell|csv|md")
             ("d,descriptions", "Print Descriptions", cxxopts::value<bool>(print_descriptions)->default_value("false"))
             ("h,help", "Print help")
           ;
@@ -230,9 +230,16 @@ int main(int argc, char **argv) {
                 }
         }
 
-        printf("%s\n", table.csv_str().c_str());
-        printf("%s\n", table.md_str().c_str());
-        printf("%s\n", table.shell_str().c_str());
+        if ("shell" == output_format) {
+                printf("%s\n", table.shell_str().c_str());
+        } else if ("csv" == output_format) {
+                printf("%s\n", table.csv_str().c_str());
+        } else if ("md" == output_format) {
+                printf("%s\n", table.md_str().c_str());
+        } else {
+                fprintf(stderr, "unexpected output value: %s\n", output_format.c_str());
+                return 1;
+        }
 
     }
 
