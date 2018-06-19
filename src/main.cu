@@ -1,12 +1,44 @@
 #include <cstdio>
 #include <cassert>
 
+#include "cxxopts.hpp"
+
 #include "table.hpp"
 
 int main(int argc, char **argv) {
 
-    int verbose = 1;
-    int print_descriptions = 1;
+        std::string output_format;
+        bool print_descriptions;
+
+        try
+        {
+          cxxopts::Options options(argv[0], " - format CUDA device info");
+          options
+            .positional_help("[optional args]")
+            .show_positional_help();
+      
+          options
+        //     .allow_unrecognised_options()
+            .add_options()
+            ("f,format", "Output Format", cxxopts::value<std::string>(output_format)->default_value("shell"), "FMT")
+            ("d,descriptions", "Print Descriptions", cxxopts::value<bool>(print_descriptions)->default_value("false"))
+            ("h,help", "Print help")
+          ;
+      
+          auto result = options.parse(argc, argv);
+      
+          if (result.count("help"))
+          {
+            std::cout << options.help({"", "Group"}) << std::endl;
+            exit(0);
+          }
+      
+      
+        } catch (const cxxopts::OptionException& e)
+        {
+          std::cout << "error parsing options: " << e.what() << std::endl;
+          exit(1);
+      }
 
     int err = 0;
     int n;
