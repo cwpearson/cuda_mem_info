@@ -4,6 +4,7 @@ project(cmake_and_cuda LANGUAGES CXX CUDA)
 
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(VERBOSE_BUILD ON)
+set(CUDA_VERBOSE_BUILD ON)
 include_directories(SYSTEM "thirdparty/cxxopts/include")
 set (CUDA_SEPARABLE_COMPILATION ON)
 
