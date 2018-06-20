@@ -5,6 +5,47 @@
 
 #include "table.hpp"
 
+
+
+//for ioctls
+#include <sys/ioctl.h>
+#include <nvidia-uvm/uvm_ioctl.h>
+#include <nv.h>
+// for files
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+// #undef XAPIGEN
+// #undef NV_STATUS_CODE
+// #define NV_STATUS_CODE( name, code, string ) { code,  string " [" #name "]" },
+
+// static struct NvStatusCodeString
+// {
+//     NV_STATUS   statusCode;
+//     const char *statusString;
+// } g_StatusCodeList[] = {
+//    #include <nvstatuscodes.h>
+//    { 0xffffffff, "Unknown error code!" } // Some compilers don't like the trailing ','
+// };
+
+// const char *nvstatusToString(NV_STATUS nvStatusIn)
+// {
+//     NvU32 i;
+//     NvU32 n = ((NvU32)(sizeof(g_StatusCodeList))/(NvU32)(sizeof(g_StatusCodeList[0])));
+//     printf("%d\n", n);
+//     for (i = 0; i < 10; i++)
+//     {
+//         printf("%d\n", g_StatusCodeList[i].statusCode);
+//         if (g_StatusCodeList[i].statusCode == nvStatusIn)
+//         {
+//             return g_StatusCodeList[i].statusString;
+//         }
+//     }
+
+//     return "Unknown error code!";
+// }
+
 int main(int argc, char **argv) {
 
         std::string output_format;
@@ -40,6 +81,72 @@ int main(int argc, char **argv) {
           exit(1);
       }
 
+      auto path = "/dev/nvidia-uvm";
+      auto fd = open(path, O_RDWR);
+      if (fd == -1)
+        {
+        perror("open");
+        return 2;
+        }
+
+      UVM_PAGEABLE_MEM_ACCESS_PARAMS q;
+
+      if (ioctl(fd, UVM_PAGEABLE_MEM_ACCESS, &q) == -1)
+      {
+          perror("ioctl get");
+      }
+      else
+      {
+          printf("pageableMemAccess : %d\n", q.pageableMemAccess);
+          printf("rmStatus: %d\n", q.rmStatus);
+      }
+      close(fd);
+
+      fd = open("/dev/nvidia0", O_RDWR);
+      if (fd == -1)
+        {
+        perror("open");
+        return 2;
+        }
+
+/*
+      nv_ioctl_numa_info_t numa_info;
+      numa_info.nid = 0;
+      if (ioctl(fd, NV_ESC_NUMA_INFO, &numa_info) == -1)
+      {
+          perror("ioctl get");
+      }
+      else
+      {
+        printf("%d\n", numa_info.nid);
+        printf("%d\n", numa_info.status);
+        printf("%llu\n", numa_info.memblock_size);
+        printf("%llu\n", numa_info.numa_mem_addr);
+        printf("%llu\n", numa_info.numa_mem_size);
+        // nv_blacklist_addresses_t blacklist_addresses NV_ALIGN_BYTES(8);
+      }
+*/
+/*
+        nv_ioctl_card_info_t info;
+        void *pinfo = &info;
+        nv_ioctl_xfer_t xfer;
+        xfer.cmd = NV_ESC_CARD_INFO;
+        xfer.size = 65536;
+        xfer.ptr = &pinfo;
+
+        nv_ioctl_rm_api_version_t ver;
+
+      if (ioctl(fd, NV_ESC_CHECK_VERSION_STR, &ver) == -1)
+      {
+          perror("ioctl get");
+      }
+      else
+      {
+        printf("%d\n", ver.reply);
+      }
+      
+      exit(0);
+*/
     int err = 0;
     int n;
     cudaGetDeviceCount(&n);
