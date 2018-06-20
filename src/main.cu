@@ -52,8 +52,6 @@ int main(int argc, char **argv) {
         std::string output_format;
         bool print_descriptions;
 
-        Report report("CUDA Properties");
-
         try
         {
           cxxopts::Options options(argv[0], "Format CUDA device info");
@@ -152,9 +150,18 @@ int main(int argc, char **argv) {
       
       exit(0);
 */
+
+    Report report("CUDA Properties");
+
     int err = 0;
-    int n;
-    cudaGetDeviceCount(&n);
+    int n = 0;
+    
+    cudaError_t cuda_error;
+    cuda_error = cudaGetDeviceCount(&n);
+    if (cudaSuccess != cuda_error) {
+        fprintf(stderr, "CUDA error: %s\n", cudaGetErrorString(cuda_error));
+        exit(1);
+    }
 
     for (int i = 0; i < n; ++i) {
 
