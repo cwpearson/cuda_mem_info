@@ -1,5 +1,7 @@
 # cuda_mem_info
 
+    cmake -DCMAKE_CUDA_HOST_COMPILER=`which g++-6` .. -DCMAKE_C_COMPILER=gcc-6 -DCMAKE_CXX_COMPILER=g++-6
+
 Get info about CUDA Device memory capabilities
 
     mkdir build
