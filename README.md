@@ -53,21 +53,21 @@ Device 0: GeForce GTX 1070
 ```
 
 ```
-$src/info -f md
-|cudaDeviceProp.pageableMemoryAccessUsesHostPageTables|0|
-|-|-|
+$ src/info -f md
+#CUDA Properties
+## Device Properties
+**Device 0: GeForce GTX 1060 3GB**
 |cudaDeviceProp.canUseHostPointerForRegisteredMem|1|
-|cudaDevAttrDirectManagedMemAccessFromHost|0|
-|cudaDevAttrCanFlushRemoteWrites|0|
+|-|-|
 |cudaDeviceProp.pageableMemoryAccess|0|
 |cudaDeviceProp.concurrentManagedAccess|1|
 |cudaDeviceProp.canMapHostMemory|1|
-|cudaDeviceProp.totalGlobalMem|8510701568|
+|cudaDeviceProp.totalGlobalMem|3142516736|
 |cudaDeviceProp.totalConstMem|65536|
 |cudaDeviceProp.sharedMemPerBlock|49152|
 |cudaDeviceProp.sharedMemPerMultiprocessor|98304|
-|cudaDeviceProp.l2CacheSize|2097152|
-|cudaDeviceProp.memoryBusWidth|256|
+|cudaDeviceProp.l2CacheSize|1572864|
+|cudaDeviceProp.memoryBusWidth|192|
 |cudaDeviceProp.memoryClockRate|4004000|
 |cudaDeviceProp.asyncEngineCount|2|
 |cudaDeviceProp.globalL1CacheSupported|1|

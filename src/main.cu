@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cassert>
+#include <memory>
 
 #include "cxxopts.hpp"
 
@@ -163,36 +164,40 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
+    Section section("Device Properties");
+
     for (int i = 0; i < n; ++i) {
-
-        Table table;
-        table.Header(0) = "Property";
-        table.Header(1) = "Value";
-        if (print_descriptions) {
-                table.Header(2) = "Description";
-        }
-
 
         cudaDeviceProp prop;
         cudaGetDeviceProperties(&prop, i);
 
-        table.Titlef("Device %d: %s", i, prop.name);
+        
+        auto table = std::make_shared<Table>();
+        table->Titlef("Device %d: %s", i, prop.name);
+        table->Header(0) = "Property";
+        table->Header(1) = "Value";
+        if (print_descriptions) {
+                table->Header(2) = "Description";
+        }
+
+
+
 
 #if __CUDACC_VER_MAJOR__ > 8 && __CUDACC_VER_MINOR__ >  1
-        table.NewRow();
-        table.Cell("cudaDeviceProp.pageableMemoryAccessUsesHostPageTables");
-        table.Cellf("%d", prop.pageableMemoryAccessUsesHostPageTables);
+        table->NewRow();
+        table->Cell("cudaDeviceProp.pageableMemoryAccessUsesHostPageTables");
+        table->Cellf("%d", prop.pageableMemoryAccessUsesHostPageTables);
         if (print_descriptions) {
-                table.Cell("Device accesses pageable memory using host page tables. This suggests Address Translation Services are enabled on Power9");
+                table->Cell("Device accesses pageable memory using host page tables. This suggests Address Translation Services are enabled on Power9");
         }
 #endif
 
 #if __CUDACC_VER_MAJOR__ > 8
-        table.NewRow();
-        table.Cell("cudaDeviceProp.canUseHostPointerForRegisteredMem");
-        table.Cellf("%d", prop.canUseHostPointerForRegisteredMem);
+        table->NewRow();
+        table->Cell("cudaDeviceProp.canUseHostPointerForRegisteredMem");
+        table->Cellf("%d", prop.canUseHostPointerForRegisteredMem);
         if (print_descriptions) {
-                table.Cell("Device can access host registered memory at the same virtual address as the CPU");
+                table->Cell("Device can access host registered memory at the same virtual address as the CPU");
         }
 #endif
 
@@ -200,11 +205,11 @@ int main(int argc, char **argv) {
 {
         int v;
         cudaDeviceGetAttribute ( &v, cudaDevAttrDirectManagedMemAccessFromHost, i );
-        table.NewRow();
-        table.Cell("cudaDevAttrDirectManagedMemAccessFromHost");
-        table.Cellf("%d", v);
+        table->NewRow();
+        table->Cell("cudaDevAttrDirectManagedMemAccessFromHost");
+        table->Cellf("%d", v);
         if (print_descriptions) {
-                table.Cell("Host can directly access managed memory on the device without migration");
+                table->Cell("Host can directly access managed memory on the device without migration");
         }
 }
 #endif
@@ -213,116 +218,119 @@ int main(int argc, char **argv) {
 {
         int v;
         cudaDeviceGetAttribute ( &v, cudaDevAttrCanFlushRemoteWrites, i );
-        table.NewRow();
-        table.Cell("cudaDevAttrCanFlushRemoteWrites");
-        table.Cellf("%d", v);
+        table->NewRow();
+        table->Cell("cudaDevAttrCanFlushRemoteWrites");
+        table->Cellf("%d", v);
         if (print_descriptions) {
-                table.Cell("device supports flushing of outstanding remote writes");
+                table->Cell("device supports flushing of outstanding remote writes");
         }
 }
 #endif
 
-        table.NewRow();
-        table.Cell("cudaDeviceProp.pageableMemoryAccess");
-        table.Cellf("%d", prop.pageableMemoryAccess);
+        table->NewRow();
+        table->Cell("cudaDeviceProp.pageableMemoryAccess");
+        table->Cellf("%d", prop.pageableMemoryAccess);
         if (print_descriptions) {
-                table.Cell("Device supports coherently accessing pageable memory without calling cudaHostRegister on it.");
+                table->Cell("Device supports coherently accessing pageable memory without calling cudaHostRegister on it.");
         }
 
-        table.NewRow();
-        table.Cell("cudaDeviceProp.concurrentManagedAccess");
-        table.Cellf("%d", prop.concurrentManagedAccess);
+        table->NewRow();
+        table->Cell("cudaDeviceProp.concurrentManagedAccess");
+        table->Cellf("%d", prop.concurrentManagedAccess);
         if (print_descriptions) {
-                table.Cell("Device can coherently access managed memory concurrently with the CPU.");
+                table->Cell("Device can coherently access managed memory concurrently with the CPU.");
         }
 
-        table.NewRow();
-        table.Cell("cudaDeviceProp.canMapHostMemory");
-        table.Cellf("%d", prop.canMapHostMemory);
+        table->NewRow();
+        table->Cell("cudaDeviceProp.canMapHostMemory");
+        table->Cellf("%d", prop.canMapHostMemory);
         if (print_descriptions) {
-                table.Cell("Device can map host memory into the CUDA address space for use with cudaHostAlloc()/cudaHostGetDevicePointer()");
+                table->Cell("Device can map host memory into the CUDA address space for use with cudaHostAlloc()/cudaHostGetDevicePointer()");
         }
 
-        table.NewRow();
-        table.Cell("cudaDeviceProp.totalGlobalMem");
-        table.Cellf("%lu", prop.totalGlobalMem);
+        table->NewRow();
+        table->Cell("cudaDeviceProp.totalGlobalMem");
+        table->Cellf("%lu", prop.totalGlobalMem);
         if (print_descriptions) {
-                table.Cell("bytes");
+                table->Cell("bytes");
         }
 
-        table.NewRow();
-        table.Cell("cudaDeviceProp.totalConstMem");
-        table.Cellf("%lu", prop.totalConstMem);
+        table->NewRow();
+        table->Cell("cudaDeviceProp.totalConstMem");
+        table->Cellf("%lu", prop.totalConstMem);
         if (print_descriptions) {
-                table.Cell("bytes");
+                table->Cell("bytes");
         }
 
-        table.NewRow();
-        table.Cell("cudaDeviceProp.sharedMemPerBlock");
-        table.Cellf("%lu", prop.sharedMemPerBlock);
+        table->NewRow();
+        table->Cell("cudaDeviceProp.sharedMemPerBlock");
+        table->Cellf("%lu", prop.sharedMemPerBlock);
         if (print_descriptions) {
-                table.Cell("bytes");
+                table->Cell("bytes");
         }
 
-        table.NewRow();
-        table.Cell("cudaDeviceProp.sharedMemPerMultiprocessor");
-        table.Cellf("%lu", prop.sharedMemPerMultiprocessor);
+        table->NewRow();
+        table->Cell("cudaDeviceProp.sharedMemPerMultiprocessor");
+        table->Cellf("%lu", prop.sharedMemPerMultiprocessor);
         if (print_descriptions) {
-                table.Cell("bytes");
+                table->Cell("bytes");
         }
 
-        table.NewRow();
-        table.Cell("cudaDeviceProp.l2CacheSize");
-        table.Cellf("%d", prop.l2CacheSize);
+        table->NewRow();
+        table->Cell("cudaDeviceProp.l2CacheSize");
+        table->Cellf("%d", prop.l2CacheSize);
         if (print_descriptions) {
-                table.Cell("bytes");
+                table->Cell("bytes");
         }
 
-        table.NewRow();
-        table.Cell("cudaDeviceProp.memoryBusWidth");
-        table.Cellf("%d", prop.memoryBusWidth);
+        table->NewRow();
+        table->Cell("cudaDeviceProp.memoryBusWidth");
+        table->Cellf("%d", prop.memoryBusWidth);
         if (print_descriptions) {
-                table.Cell("bits");
+                table->Cell("bits");
         }
 
-        table.NewRow();
-        table.Cell("cudaDeviceProp.memoryClockRate");
-        table.Cellf("%d", prop.memoryClockRate);
+        table->NewRow();
+        table->Cell("cudaDeviceProp.memoryClockRate");
+        table->Cellf("%d", prop.memoryClockRate);
         if (print_descriptions) {
-                table.Cell("kHz");
+                table->Cell("kHz");
         }
 
-        table.NewRow();
-        table.Cell("cudaDeviceProp.asyncEngineCount");
-        table.Cellf("%d", prop.asyncEngineCount);
+        table->NewRow();
+        table->Cell("cudaDeviceProp.asyncEngineCount");
+        table->Cellf("%d", prop.asyncEngineCount);
         if (print_descriptions) {
-                table.Cell("1: concurrent kernel and copy, 2: kernel and duplex copy");
+                table->Cell("1: concurrent kernel and copy, 2: kernel and duplex copy");
         }
 
-        table.NewRow();
-        table.Cell("cudaDeviceProp.globalL1CacheSupported");
-        table.Cellf("%d", prop.globalL1CacheSupported);
+        table->NewRow();
+        table->Cell("cudaDeviceProp.globalL1CacheSupported");
+        table->Cellf("%d", prop.globalL1CacheSupported);
         if (print_descriptions) {
-                table.Cell("Device supports caching of globals in L1 cache");
+                table->Cell("Device supports caching of globals in L1 cache");
         }
 
-        table.NewRow();
-        table.Cell("cudaDeviceProp.localL1CacheSupported");
-        table.Cellf("%d", prop.localL1CacheSupported);
+        table->NewRow();
+        table->Cell("cudaDeviceProp.localL1CacheSupported");
+        table->Cellf("%d", prop.localL1CacheSupported);
         if (print_descriptions) {
-                table.Cell("Device supports caching of locals in L1 cache");
+                table->Cell("Device supports caching of locals in L1 cache");
         }
 
         {
                 cudaSetDevice(i);
                 cudaSharedMemConfig config;
                 cudaDeviceGetSharedMemConfig ( &config );
+                table->NewRow();
+                table->Cell("cudaDeviceGetSharedMemConfig");
+
                 if (cudaSharedMemBankSizeFourByte == config) {
-                        printf("\tcudaDeviceGetSharedMemConfig: cudaSharedMemBankSizeFourByte\n");
+                        table->Cell("cudaSharedMemBankSizeFourByte");
                 } else if ( cudaSharedMemBankSizeEightByte == config) {
-                        printf("\tcudaDeviceGetSharedMemConfig: cudaSharedMemBankSizeEightByte\n");
+                        table->Cell("cudaSharedMemBankSizeEightByte");
                 } else {
-                        printf("\tcudaDeviceGetSharedMemConfig: UNKNOWN\n");
+                        table->Cell("UNKNOWN");
                         err = 1;
                 }
         }
@@ -331,39 +339,52 @@ int main(int argc, char **argv) {
                 cudaSetDevice(i);
                 cudaFuncCache config;
                 cudaDeviceGetCacheConfig ( &config );
+                table->NewRow();
+                table->Cell("cudaDeviceGetCacheConfig");
+
                 if (cudaFuncCachePreferNone == config) {
-                        printf("\tcudaDeviceGetCacheConfig: cudaFuncCachePreferNone\n");
-                        printf("\t\tno preference for shared memory or L1, or sizes are fixed\n");
+                        table->Cell("cudaFuncCachePreferNone");
+                        if (print_descriptions) {
+                                table->Cell("no preference for shared memory or L1, or sizes are fixed");
+                        }
                 } else if ( cudaFuncCachePreferShared == config) {
-                        printf("\tcudaDeviceGetCacheConfig: cudaFuncCachePreferShared\n");
-                        printf("\t\tprefer larger shared memory and smaller L1 cache\n");
+                        table->Cell("cudaFuncCachePreferShared");
+                        if (print_descriptions) {
+                                table->Cell("prefer larger shared memory and smaller L1 cache");
+                        }
                 } else if ( cudaFuncCachePreferL1 == config) {
-                        printf("\tcudaDeviceGetCacheConfig: cudaFuncCachePreferL1\n");
-                        printf("\t\tprefer larger L1 cache and smaller shared memory\n");
+                        table->Cell("cudaFuncCachePreferL1");
+                        if (print_descriptions) {
+                                table->Cell("prefer larger L1 cache and smaller shared memory");
+                        }
                 } else if ( cudaFuncCachePreferEqual == config) {
-                        printf("\tcudaDeviceGetCacheConfig: cudaFuncCachePreferEqual\n");
-                        printf("\t\tprefer equal size L1 cache and shared memory\n");
+                        table->Cell("cudaFuncCachePreferEqual");
+                        if (print_descriptions) {
+                                table->Cell("prefer equal size L1 cache and shared memory");
+                        }
                 } else {
-                        printf("\tcudaDeviceGetCacheConfig: UNKNOWN\n");
+                        table->Cell("UNKNOWN");
                         err = 1;
                 }
         }
 
+        section.AppendElement(table);
+
+
+    }
+
+        report.AppendSection(section);
+
         if ("shell" == output_format) {
                 printf("%s\n", report.ascii_str().c_str());
-                printf("%s\n", table.shell_str().c_str());
         } else if ("csv" == output_format) {
-                printf("%s\n", table.csv_str().c_str());
+                printf("%s\n", report.csv_str().c_str());
         } else if ("md" == output_format) {
-                printf("%s\n", table.md_str().c_str());
+                printf("%s\n", report.md_str().c_str());
         } else {
                 fprintf(stderr, "unexpected output value: %s\n", output_format.c_str());
                 return 1;
         }
-
-    }
-
-
 
     return err;
 }

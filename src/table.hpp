@@ -11,12 +11,14 @@
 #include <string>
 #include <iomanip>
 
-std::string
+#include "element.hpp"
+
+inline std::string
 vformat (const char *fmt, va_list ap)
 {
     // Allocate a buffer on the stack that's big enough for us almost
     // all the time.
-    size_t size = 1024;
+    int size = 1024;
     char buf[size];
 
     // Try to vsnprintf into our buffer.
@@ -42,7 +44,7 @@ vformat (const char *fmt, va_list ap)
     }
 }
 
-std::string
+inline std::string
 format (const char *fmt, ...)
 {
     va_list ap;
@@ -103,6 +105,11 @@ public:
     std::string md_str (size_t pad = 0) const {
         std::stringstream ss;
         const size_t size = std::max(pad, row_.size());
+
+        if (size > 0) {
+            ss << "|";
+        }
+
         for (size_t i = 0; i < size; ++i) {
             if (i < row_.size()) {
                 ss << row_[i];
@@ -138,7 +145,7 @@ public:
     }
 };
 
-class Table {
+class Table : public Element {
 private:
     Row header_;
     std::vector<Row> rows_;
@@ -161,7 +168,7 @@ private:
         return num_cols;
     }
 
-    size_t ColWidth(const size_t col_idx) {
+    size_t ColWidth(const size_t col_idx) const {
         size_t width = 0;
 
         if (col_idx < header_.size()) {
@@ -212,10 +219,8 @@ public:
         rows_.push_back(Row());
     }
 
-    std::string csv_str() {
+    std::string csv_str() const {
         std::stringstream ss;
-
-        const auto num_cols = NumCols();
 
         for (const auto row : rows_) {
             ss << row.csv_str();
@@ -224,73 +229,8 @@ public:
         return ss.str();
     }
 
-    std::string md_str() {
-        std::stringstream ss;
-        const size_t num_rows = NumRows();
-        const size_t num_cols = NumCols();
-
-        for (size_t rowIdx = 0; rowIdx < num_rows; ++rowIdx) {
-
-            const auto &row = rows_[rowIdx];
-
-            if (num_cols > 0) {
-                ss << "|";
-            }
-
-            ss << row.md_str(num_cols);
-            ss << "\n";
-
-            // first row, print title break
-            if (0 == rowIdx) {
-                if (num_cols > 0) {
-                    ss << "|";
-                }
-                for (size_t i = 0; i < num_cols; ++i) {
-                    ss << "-|";
-                }
-            ss << "\n";
-            }
-
-        }
-
-        return ss.str();
-    }
-
-    std::string shell_str() {
-        std::stringstream ss;
-        const size_t num_rows = NumRows();
-        const size_t num_cols = NumCols();
-
-        // Compute display width of each column
-        std::vector<size_t> col_display_widths;
-        for (size_t col_idx = 0; col_idx < num_cols; ++col_idx) {
-            const size_t display_width = ColWidth(col_idx) + 2;
-            col_display_widths.push_back(display_width);
-        }
-
-        auto divider = [&]() {
-            ss << "+";
-            for (auto width : col_display_widths) {
-                for (size_t i = 0; i < width; ++i) {
-                    ss << "-";
-                }
-                ss << "+";
-            }
-            ss << "\n";
-        };
-
-
-        ss << title_ << std::endl;
-        divider();
-        ss << header_.shell_str(num_cols, col_display_widths) << std::endl;
-        divider();
-        for (const auto &row : rows_) {
-            ss << row.shell_str(num_cols, col_display_widths) << std::endl;
-        }
-        divider();
-
-        return ss.str();
-    }
+    std::string md_str() const override;
+    std::string ascii_str() const override;
 };
 
 #endif
