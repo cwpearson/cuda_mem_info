@@ -4,13 +4,14 @@
 #include "cxxopts.hpp"
 
 #include "table.hpp"
+#include "report.hpp"
 
 
 
 //for ioctls
-#include <sys/ioctl.h>
-#include <nvidia-uvm/uvm_ioctl.h>
-#include <nv.h>
+// #include <sys/ioctl.h>
+// #include <nvidia-uvm/uvm_ioctl.h>
+// #include <nv.h>
 // for files
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -51,6 +52,8 @@ int main(int argc, char **argv) {
         std::string output_format;
         bool print_descriptions;
 
+        Report report("CUDA Properties");
+
         try
         {
           cxxopts::Options options(argv[0], "Format CUDA device info");
@@ -81,6 +84,7 @@ int main(int argc, char **argv) {
           exit(1);
       }
 
+      /*
       auto path = "/dev/nvidia-uvm";
       auto fd = open(path, O_RDWR);
       if (fd == -1)
@@ -108,6 +112,7 @@ int main(int argc, char **argv) {
         perror("open");
         return 2;
         }
+    */
 
 /*
       nv_ioctl_numa_info_t numa_info;
@@ -338,6 +343,7 @@ int main(int argc, char **argv) {
         }
 
         if ("shell" == output_format) {
+                printf("%s\n", report.ascii_str().c_str());
                 printf("%s\n", table.shell_str().c_str());
         } else if ("csv" == output_format) {
                 printf("%s\n", table.csv_str().c_str());

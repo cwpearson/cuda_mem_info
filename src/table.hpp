@@ -1,3 +1,6 @@
+#ifndef TABLE_HPP
+#define TABLE_HPP
+
 #include <string>
 #include <sstream>
 #include <vector>
@@ -289,3 +292,5 @@ public:
         return ss.str();
     }
 };
+
+#endif
