@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
           options
         //     .allow_unrecognised_options()
             .add_options()
-            ("f,format", "Output Format", cxxopts::value<std::string>(output_format)->default_value("shell"), "shell|csv|md")
+            ("f,format", "Output Format", cxxopts::value<std::string>(output_format)->default_value("ascii"), "ascii|csv|md")
             ("d,descriptions", "Print Descriptions", cxxopts::value<bool>(print_descriptions)->default_value("false"))
             ("h,help", "Print help")
           ;
@@ -182,6 +182,12 @@ int main(int argc, char **argv) {
 
 
 
+        table->NewRow();
+        table->Cell("Compute Capability");
+        table->Cellf("%d.%d", prop.major, prop.minor);
+        if (print_descriptions) {
+                table->Cell("major.minor");
+        }
 
 #if __CUDACC_VER_MAJOR__ > 8 && __CUDACC_VER_MINOR__ >  1
         table->NewRow();
@@ -369,13 +375,11 @@ int main(int argc, char **argv) {
         }
 
         section.AppendElement(table);
-
-
     }
 
         report.AppendSection(section);
 
-        if ("shell" == output_format) {
+        if ("ascii" == output_format) {
                 printf("%s\n", report.ascii_str().c_str());
         } else if ("csv" == output_format) {
                 printf("%s\n", report.csv_str().c_str());
