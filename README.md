@@ -21,7 +21,7 @@ Format CUDA device info
 Usage:
   src/info [OPTION...]
 
-  -f, --format shell|csv|md  Output Format (default: shell)
+  -f, --format ascii|csv|md  Output Format (default: ascii)
   -d, --descriptions         Print Descriptions
   -h, --help                 Print help
 ```
